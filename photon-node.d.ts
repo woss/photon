@@ -637,6 +637,675 @@ export function firenze(img: PhotonImage): void;
 */
 export function obsidian(img: PhotonImage): void;
 /**
+* Add bordered-text to an image.
+* The only font available as of now is Roboto.
+* Note: A graphic design/text-drawing library is currently being developed, so stay tuned.
+*
+* # Arguments
+* * `photon_image` - A PhotonImage.
+* * `text` - Text string to be drawn to the image.
+* * `x` - x-coordinate of where first letter's 1st pixel should be drawn.
+* * `y` - y-coordinate of where first letter's 1st pixel should be drawn.
+*
+* # Example
+*
+* ```no_run
+* // For example to draw the string "Welcome to Photon!" at 10, 10:
+* use photon_rs::native::open_image;
+* use photon_rs::text::draw_text_with_border;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* draw_text_with_border(&mut img, "Welcome to Photon!", 10_u32, 10_u32);
+* ```
+* @param {PhotonImage} photon_img
+* @param {string} text
+* @param {number} x
+* @param {number} y
+*/
+export function draw_text_with_border(photon_img: PhotonImage, text: string, x: number, y: number): void;
+/**
+* Add text to an image.
+* The only font available as of now is Roboto.
+* Note: A graphic design/text-drawing library is currently being developed, so stay tuned.
+*
+* # Arguments
+* * `photon_image` - A PhotonImage.
+* * `text` - Text string to be drawn to the image.
+* * `x` - x-coordinate of where first letter's 1st pixel should be drawn.
+* * `y` - y-coordinate of where first letter's 1st pixel should be drawn.
+*
+* # Example
+*
+* ```no_run
+* // For example to draw the string "Welcome to Photon!" at 10, 10:
+* use photon_rs::native::open_image;
+* use photon_rs::text::draw_text;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* draw_text(&mut img, "Welcome to Photon!", 10_u32, 10_u32);
+* ```
+* @param {PhotonImage} photon_img
+* @param {string} text
+* @param {number} x
+* @param {number} y
+*/
+export function draw_text(photon_img: PhotonImage, text: string, x: number, y: number): void;
+/**
+* Applies gamma correction to an image.
+* # Arguments
+* * `photon_image` - A PhotonImage that contains a view into the image.
+* * `red` - Gamma value for red channel.
+* * `green` - Gamma value for green channel.
+* * `blue` - Gamma value for blue channel.
+* # Example
+*
+* ```no_run
+* // For example, to turn an image of type `PhotonImage` into a gamma corrected image:
+* use photon_rs::colour_spaces::gamma_correction;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* gamma_correction(&mut img, 2.2, 2.2, 2.2);
+* ```
+* @param {PhotonImage} photon_image
+* @param {number} red
+* @param {number} green
+* @param {number} blue
+*/
+export function gamma_correction(photon_image: PhotonImage, red: number, green: number, blue: number): void;
+/**
+* Image manipulation effects in the HSLuv colour space
+*
+* Effects include:
+* * **saturate** - Saturation increase.
+* * **desaturate** - Desaturate the image.
+* * **shift_hue** - Hue rotation by a specified number of degrees.
+* * **darken** - Decrease the brightness.
+* * **lighten** - Increase the brightness.
+*
+* # Arguments
+* * `photon_image` - A PhotonImage.
+* * `mode` - The effect desired to be applied. Choose from: `saturate`, `desaturate`, `shift_hue`, `darken`, `lighten`
+* * `amt` - A float value from 0 to 1 which represents the amount the effect should be increased by.
+* # Example
+* ```no_run
+* // For example to increase the saturation by 10%:
+* use photon_rs::colour_spaces::hsluv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* hsluv(&mut img, "saturate", 0.1_f32);
+* ```
+* @param {PhotonImage} photon_image
+* @param {string} mode
+* @param {number} amt
+*/
+export function hsluv(photon_image: PhotonImage, mode: string, amt: number): void;
+/**
+* Image manipulation effects in the LCh colour space
+*
+* Effects include:
+* * **saturate** - Saturation increase.
+* * **desaturate** - Desaturate the image.
+* * **shift_hue** - Hue rotation by a specified number of degrees.
+* * **darken** - Decrease the brightness.
+* * **lighten** - Increase the brightness.
+*
+* # Arguments
+* * `photon_image` - A PhotonImage.
+* * `mode` - The effect desired to be applied. Choose from: `saturate`, `desaturate`, `shift_hue`, `darken`, `lighten`
+* * `amt` - A float value from 0 to 1 which represents the amount the effect should be increased by.
+* # Example
+* ```no_run
+* // For example to increase the saturation by 10%:
+* use photon_rs::colour_spaces::lch;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* lch(&mut img, "saturate", 0.1_f32);
+* ```
+* @param {PhotonImage} photon_image
+* @param {string} mode
+* @param {number} amt
+*/
+export function lch(photon_image: PhotonImage, mode: string, amt: number): void;
+/**
+* Image manipulation effects in the HSL colour space.
+*
+* Effects include:
+* * **saturate** - Saturation increase.
+* * **desaturate** - Desaturate the image.
+* * **shift_hue** - Hue rotation by a specified number of degrees.
+* * **darken** - Decrease the brightness.
+* * **lighten** - Increase the brightness.
+*
+* # Arguments
+* * `photon_image` - A PhotonImage.
+* * `mode` - The effect desired to be applied. Choose from: `saturate`, `desaturate`, `shift_hue`, `darken`, `lighten`
+* * `amt` - A float value from 0 to 1 which represents the amount the effect should be increased by.
+* # Example
+* ```no_run
+* // For example to increase the saturation by 10%:
+* use photon_rs::colour_spaces::hsl;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* hsl(&mut img, "saturate", 0.1_f32);
+* ```
+* @param {PhotonImage} photon_image
+* @param {string} mode
+* @param {number} amt
+*/
+export function hsl(photon_image: PhotonImage, mode: string, amt: number): void;
+/**
+* Image manipulation in the HSV colour space.
+*
+* Effects include:
+* * **saturate** - Saturation increase.
+* * **desaturate** - Desaturate the image.
+* * **shift_hue** - Hue rotation by a specified number of degrees.
+* * **darken** - Decrease the brightness.
+* * **lighten** - Increase the brightness.
+*
+* # Arguments
+* * `photon_image` - A PhotonImage.
+* * `mode` - The effect desired to be applied. Choose from: `saturate`, `desaturate`, `shift_hue`, `darken`, `lighten`
+* * `amt` - A float value from 0 to 1 which represents the amount the effect should be increased by.
+*
+* # Example
+* ```no_run
+* // For example to increase the saturation by 10%:
+* use photon_rs::colour_spaces::hsv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* hsv(&mut img, "saturate", 0.1_f32);
+* ```
+* @param {PhotonImage} photon_image
+* @param {string} mode
+* @param {number} amt
+*/
+export function hsv(photon_image: PhotonImage, mode: string, amt: number): void;
+/**
+* Shift hue by a specified number of degrees in the HSL colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `mode` - A float value from 0 to 1 which is the amount to shift the hue by, or hue rotate by.
+*
+* # Example
+* ```no_run
+* // For example to hue rotate/shift the hue by 120 degrees in the HSL colour space:
+* use photon_rs::colour_spaces::hue_rotate_hsl;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* hue_rotate_hsl(&mut img, 120_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} degrees
+*/
+export function hue_rotate_hsl(img: PhotonImage, degrees: number): void;
+/**
+* Shift hue by a specified number of degrees in the HSV colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `mode` - A float value from 0 to 1 which is the amount to shift the hue by, or hue rotate by.
+*
+* # Example
+* ```no_run
+* // For example to hue rotate/shift the hue by 120 degrees in the HSV colour space:
+* use photon_rs::colour_spaces::hue_rotate_hsv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* hue_rotate_hsv(&mut img, 120_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} degrees
+*/
+export function hue_rotate_hsv(img: PhotonImage, degrees: number): void;
+/**
+* Shift hue by a specified number of degrees in the LCh colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `mode` - A float value from 0 to 1 which is the amount to shift the hue by, or hue rotate by.
+*
+* # Example
+* ```no_run
+* // For example to hue rotate/shift the hue by 120 degrees in the HSL colour space:
+* use photon_rs::colour_spaces::hue_rotate_lch;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* hue_rotate_lch(&mut img, 120_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} degrees
+*/
+export function hue_rotate_lch(img: PhotonImage, degrees: number): void;
+/**
+* Shift hue by a specified number of degrees in the HSLuv colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `mode` - A float value from 0 to 1 which is the amount to shift the hue by, or hue rotate by.
+*
+* # Example
+* ```no_run
+* // For example to hue rotate/shift the hue by 120 degrees in the HSL colour space:
+* use photon_rs::colour_spaces::hue_rotate_hsluv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* hue_rotate_hsluv(&mut img, 120_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} degrees
+*/
+export function hue_rotate_hsluv(img: PhotonImage, degrees: number): void;
+/**
+* Increase the image's saturation by converting each pixel's colour to the HSL colour space
+* and increasing the colour's saturation.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to increase the saturation by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Increasing saturation by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to increase saturation by 10% in the HSL colour space:
+* use photon_rs::colour_spaces::saturate_hsl;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* saturate_hsl(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function saturate_hsl(img: PhotonImage, level: number): void;
+/**
+* Increase the image's saturation in the LCh colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to increase the saturation by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Increasing saturation by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to increase saturation by 40% in the Lch colour space:
+* use photon_rs::colour_spaces::saturate_lch;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* saturate_lch(&mut img, 0.4_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function saturate_lch(img: PhotonImage, level: number): void;
+/**
+* Increase the image's saturation in the HSLuv colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to increase the saturation by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Increasing saturation by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to increase saturation by 40% in the HSLuv colour space:
+* use photon_rs::colour_spaces::saturate_hsluv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* saturate_hsluv(&mut img, 0.4_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function saturate_hsluv(img: PhotonImage, level: number): void;
+/**
+* Increase the image's saturation in the HSV colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level by which to increase the saturation by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Increasing saturation by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to increase saturation by 30% in the HSV colour space:
+* use photon_rs::colour_spaces::saturate_hsv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* saturate_hsv(&mut img, 0.3_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function saturate_hsv(img: PhotonImage, level: number): void;
+/**
+* Lighten an image by a specified amount in the LCh colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to lighten the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Lightening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to lighten an image by 10% in the LCh colour space:
+* use photon_rs::colour_spaces::lighten_lch;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* lighten_lch(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function lighten_lch(img: PhotonImage, level: number): void;
+/**
+* Lighten an image by a specified amount in the HSLuv colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to lighten the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Lightening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to lighten an image by 10% in the HSLuv colour space:
+* use photon_rs::colour_spaces::lighten_hsluv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* lighten_hsluv(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function lighten_hsluv(img: PhotonImage, level: number): void;
+/**
+* Lighten an image by a specified amount in the HSL colour space.
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to lighten the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Lightening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to lighten an image by 10% in the HSL colour space:
+* use photon_rs::colour_spaces::lighten_hsl;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* lighten_hsl(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function lighten_hsl(img: PhotonImage, level: number): void;
+/**
+* Lighten an image by a specified amount in the HSV colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to lighten the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Lightening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to lighten an image by 10% in the HSV colour space:
+* use photon_rs::colour_spaces::lighten_hsv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* lighten_hsv(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function lighten_hsv(img: PhotonImage, level: number): void;
+/**
+* Darken the image by a specified amount in the LCh colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to darken the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Darkening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to darken an image by 10% in the LCh colour space:
+* use photon_rs::colour_spaces::darken_lch;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* darken_lch(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function darken_lch(img: PhotonImage, level: number): void;
+/**
+* Darken the image by a specified amount in the HSLuv colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to darken the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Darkening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to darken an image by 10% in the HSLuv colour space:
+* use photon_rs::colour_spaces::darken_hsluv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* darken_hsluv(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function darken_hsluv(img: PhotonImage, level: number): void;
+/**
+* Darken the image by a specified amount in the HSL colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to darken the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Darkening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to darken an image by 10% in the HSL colour space:
+* use photon_rs::colour_spaces::darken_hsl;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* darken_hsl(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function darken_hsl(img: PhotonImage, level: number): void;
+/**
+* Darken the image's colours by a specified amount in the HSV colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to darken the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Darkening by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to darken an image by 10% in the HSV colour space:
+* use photon_rs::colour_spaces::darken_hsv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* darken_hsv(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function darken_hsv(img: PhotonImage, level: number): void;
+/**
+* Desaturate the image by a specified amount in the HSV colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to desaturate the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Desaturating by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to desaturate an image by 10% in the HSV colour space:
+* use photon_rs::colour_spaces::desaturate_hsv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* desaturate_hsv(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function desaturate_hsv(img: PhotonImage, level: number): void;
+/**
+* Desaturate the image by a specified amount in the HSL colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to desaturate the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Desaturating by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to desaturate an image by 10% in the LCh colour space:
+* use photon_rs::colour_spaces::desaturate_hsl;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* desaturate_hsl(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function desaturate_hsl(img: PhotonImage, level: number): void;
+/**
+* Desaturate the image by a specified amount in the LCh colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to desaturate the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Desaturating by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to desaturate an image by 10% in the LCh colour space:
+* use photon_rs::colour_spaces::desaturate_lch;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* desaturate_lch(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function desaturate_lch(img: PhotonImage, level: number): void;
+/**
+* Desaturate the image by a specified amount in the HSLuv colour space.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+* * `level` - Float value from 0 to 1 representing the level to which to desaturate the image by.
+* The `level` must be from 0 to 1 in floating-point, `f32` format.
+* Desaturating by 80% would be represented by a `level` of 0.8
+*
+* # Example
+* ```no_run
+* // For example to desaturate an image by 10% in the HSLuv colour space:
+* use photon_rs::colour_spaces::desaturate_hsluv;
+* use photon_rs::native::open_image;
+*
+* // Open the image. A PhotonImage is returned.
+* let mut img = open_image("img.jpg").expect("File should open");
+* desaturate_hsluv(&mut img, 0.1_f32);
+* ```
+* @param {PhotonImage} img
+* @param {number} level
+*/
+export function desaturate_hsluv(img: PhotonImage, level: number): void;
+/**
+* Mix image with a single color, supporting passing `opacity`.
+* The algorithm comes from Jimp. See `function mix` and `function colorFn` at following link:
+* https://github.com/oliver-moran/jimp/blob/29679faa597228ff2f20d34c5758e4d2257065a3/packages/plugin-color/src/index.js
+* Specifically, result_value = (mix_color_value - origin_value) * opacity + origin_value =
+* mix_color_value * opacity + (1 - opacity) * origin_value for each
+* of RGB channel.
+*
+* # Arguments
+* * `photon_image` - A PhotonImage that contains a view into the image.
+* * `mix_color` - the color to be mixed in, as an RGB value.
+* * `opacity` - the opacity of color when mixed to image. Float value from 0 to 1.
+* # Example
+*
+* ```no_run
+* // For example, to mix an image with rgb (50, 255, 254) and opacity 0.4:
+* use photon_rs::Rgb;
+* use photon_rs::colour_spaces::mix_with_colour;
+* use photon_rs::native::open_image;
+*
+* let mix_colour = Rgb::new(50_u8, 255_u8, 254_u8);
+* let mut img = open_image("img.jpg").expect("File should open");
+* mix_with_colour(&mut img, mix_colour, 0.4_f32);
+* ```
+* @param {PhotonImage} photon_image
+* @param {Rgb} mix_colour
+* @param {number} opacity
+*/
+export function mix_with_colour(photon_image: PhotonImage, mix_colour: Rgb, opacity: number): void;
+/**
 *! [temp] Check if WASM is supported.
 */
 export function run(): void;
@@ -688,6 +1357,314 @@ export function base64_to_vec(base64: string): Uint8Array;
 * @returns {ImageData}
 */
 export function to_image_data(photon_image: PhotonImage): ImageData;
+/**
+* Noise reduction.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to noise reduct an image:
+* use photon_rs::conv::noise_reduction;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* noise_reduction(&mut img);
+* ```
+* Adds a constant to a select R, G, or B channel's value.
+* @param {PhotonImage} photon_image
+*/
+export function noise_reduction(photon_image: PhotonImage): void;
+/**
+* Sharpen an image.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to sharpen an image:
+* use photon_rs::conv::sharpen;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* sharpen(&mut img);
+* ```
+* Adds a constant to a select R, G, or B channel's value.
+* @param {PhotonImage} photon_image
+*/
+export function sharpen(photon_image: PhotonImage): void;
+/**
+* Apply edge detection to an image, to create a dark version with its edges highlighted.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to increase the Red channel for all pixels by 10:
+* use photon_rs::conv::edge_detection;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* edge_detection(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function edge_detection(photon_image: PhotonImage): void;
+/**
+* Apply an identity kernel convolution to an image.
+*
+* # Arguments
+* * `img` -A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply an identity kernel convolution:
+* use photon_rs::conv::identity;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* identity(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function identity(photon_image: PhotonImage): void;
+/**
+* Apply a box blur effect.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply a box blur effect:
+* use photon_rs::conv::box_blur;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* box_blur(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function box_blur(photon_image: PhotonImage): void;
+/**
+* Gaussian blur in linear time.
+*
+* Reference: http://blog.ivank.net/fastest-gaussian-blur.html
+*
+* # Arguments
+* * `photon_image` - A PhotonImage
+* * `radius` - blur radius
+* # Example
+*
+* ```no_run
+* use photon_rs::conv::gaussian_blur;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* gaussian_blur(&mut img, 3_i32);
+* ```
+* @param {PhotonImage} photon_image
+* @param {number} radius
+*/
+export function gaussian_blur(photon_image: PhotonImage, radius: number): void;
+/**
+* Detect horizontal lines in an image, and highlight these only.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to display the horizontal lines in an image:
+* use photon_rs::conv::detect_horizontal_lines;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* detect_horizontal_lines(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function detect_horizontal_lines(photon_image: PhotonImage): void;
+/**
+* Detect vertical lines in an image, and highlight these only.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to display the vertical lines in an image:
+* use photon_rs::conv::detect_vertical_lines;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* detect_vertical_lines(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function detect_vertical_lines(photon_image: PhotonImage): void;
+/**
+* Detect lines at a forty five degree angle in an image, and highlight these only.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to display the lines at a forty five degree angle in an image:
+* use photon_rs::conv::detect_45_deg_lines;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* detect_45_deg_lines(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function detect_45_deg_lines(photon_image: PhotonImage): void;
+/**
+* Detect lines at a 135 degree angle in an image, and highlight these only.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to display the lines at a 135 degree angle in an image:
+* use photon_rs::conv::detect_135_deg_lines;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* detect_135_deg_lines(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function detect_135_deg_lines(photon_image: PhotonImage): void;
+/**
+* Apply a standard laplace convolution.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply a laplace effect:
+* use photon_rs::conv::laplace;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* laplace(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function laplace(photon_image: PhotonImage): void;
+/**
+* Preset edge effect.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply this effect:
+* use photon_rs::conv::edge_one;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* edge_one(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function edge_one(photon_image: PhotonImage): void;
+/**
+* Apply an emboss effect to an image.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply an emboss effect:
+* use photon_rs::conv::emboss;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* emboss(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function emboss(photon_image: PhotonImage): void;
+/**
+* Apply a horizontal Sobel filter to an image.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply a horizontal Sobel filter:
+* use photon_rs::conv::sobel_horizontal;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* sobel_horizontal(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function sobel_horizontal(photon_image: PhotonImage): void;
+/**
+* Apply a horizontal Prewitt convolution to an image.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply a horizontal Prewitt convolution effect:
+* use photon_rs::conv::prewitt_horizontal;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* prewitt_horizontal(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function prewitt_horizontal(photon_image: PhotonImage): void;
+/**
+* Apply a vertical Sobel filter to an image.
+*
+* # Arguments
+* * `img` - A PhotonImage.
+*
+* # Example
+*
+* ```no_run
+* // For example, to apply a vertical Sobel filter:
+* use photon_rs::conv::sobel_vertical;
+* use photon_rs::native::open_image;
+*
+* let mut img = open_image("img.jpg").expect("File should open");
+* sobel_vertical(&mut img);
+* ```
+* @param {PhotonImage} photon_image
+*/
+export function sobel_vertical(photon_image: PhotonImage): void;
 /**
 * Alter a select channel by incrementing or decrementing its value by a constant.
 *
@@ -1109,314 +2086,6 @@ export function selective_saturate(img: PhotonImage, ref_color: Rgb, amt: number
 */
 export function selective_greyscale(photon_image: PhotonImage, ref_color: Rgb): void;
 /**
-* Noise reduction.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to noise reduct an image:
-* use photon_rs::conv::noise_reduction;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* noise_reduction(&mut img);
-* ```
-* Adds a constant to a select R, G, or B channel's value.
-* @param {PhotonImage} photon_image
-*/
-export function noise_reduction(photon_image: PhotonImage): void;
-/**
-* Sharpen an image.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to sharpen an image:
-* use photon_rs::conv::sharpen;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* sharpen(&mut img);
-* ```
-* Adds a constant to a select R, G, or B channel's value.
-* @param {PhotonImage} photon_image
-*/
-export function sharpen(photon_image: PhotonImage): void;
-/**
-* Apply edge detection to an image, to create a dark version with its edges highlighted.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to increase the Red channel for all pixels by 10:
-* use photon_rs::conv::edge_detection;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* edge_detection(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function edge_detection(photon_image: PhotonImage): void;
-/**
-* Apply an identity kernel convolution to an image.
-*
-* # Arguments
-* * `img` -A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply an identity kernel convolution:
-* use photon_rs::conv::identity;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* identity(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function identity(photon_image: PhotonImage): void;
-/**
-* Apply a box blur effect.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply a box blur effect:
-* use photon_rs::conv::box_blur;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* box_blur(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function box_blur(photon_image: PhotonImage): void;
-/**
-* Gaussian blur in linear time.
-*
-* Reference: http://blog.ivank.net/fastest-gaussian-blur.html
-*
-* # Arguments
-* * `photon_image` - A PhotonImage
-* * `radius` - blur radius
-* # Example
-*
-* ```no_run
-* use photon_rs::conv::gaussian_blur;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* gaussian_blur(&mut img, 3_i32);
-* ```
-* @param {PhotonImage} photon_image
-* @param {number} radius
-*/
-export function gaussian_blur(photon_image: PhotonImage, radius: number): void;
-/**
-* Detect horizontal lines in an image, and highlight these only.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to display the horizontal lines in an image:
-* use photon_rs::conv::detect_horizontal_lines;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* detect_horizontal_lines(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function detect_horizontal_lines(photon_image: PhotonImage): void;
-/**
-* Detect vertical lines in an image, and highlight these only.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to display the vertical lines in an image:
-* use photon_rs::conv::detect_vertical_lines;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* detect_vertical_lines(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function detect_vertical_lines(photon_image: PhotonImage): void;
-/**
-* Detect lines at a forty five degree angle in an image, and highlight these only.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to display the lines at a forty five degree angle in an image:
-* use photon_rs::conv::detect_45_deg_lines;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* detect_45_deg_lines(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function detect_45_deg_lines(photon_image: PhotonImage): void;
-/**
-* Detect lines at a 135 degree angle in an image, and highlight these only.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to display the lines at a 135 degree angle in an image:
-* use photon_rs::conv::detect_135_deg_lines;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* detect_135_deg_lines(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function detect_135_deg_lines(photon_image: PhotonImage): void;
-/**
-* Apply a standard laplace convolution.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply a laplace effect:
-* use photon_rs::conv::laplace;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* laplace(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function laplace(photon_image: PhotonImage): void;
-/**
-* Preset edge effect.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply this effect:
-* use photon_rs::conv::edge_one;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* edge_one(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function edge_one(photon_image: PhotonImage): void;
-/**
-* Apply an emboss effect to an image.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply an emboss effect:
-* use photon_rs::conv::emboss;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* emboss(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function emboss(photon_image: PhotonImage): void;
-/**
-* Apply a horizontal Sobel filter to an image.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply a horizontal Sobel filter:
-* use photon_rs::conv::sobel_horizontal;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* sobel_horizontal(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function sobel_horizontal(photon_image: PhotonImage): void;
-/**
-* Apply a horizontal Prewitt convolution to an image.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply a horizontal Prewitt convolution effect:
-* use photon_rs::conv::prewitt_horizontal;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* prewitt_horizontal(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function prewitt_horizontal(photon_image: PhotonImage): void;
-/**
-* Apply a vertical Sobel filter to an image.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-*
-* # Example
-*
-* ```no_run
-* // For example, to apply a vertical Sobel filter:
-* use photon_rs::conv::sobel_vertical;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* sobel_vertical(&mut img);
-* ```
-* @param {PhotonImage} photon_image
-*/
-export function sobel_vertical(photon_image: PhotonImage): void;
-/**
 * Add a watermark to an image.
 *
 * # Arguments
@@ -1481,479 +2150,6 @@ export function create_gradient(width: number, height: number): PhotonImage;
 * @param {PhotonImage} image
 */
 export function apply_gradient(image: PhotonImage): void;
-/**
-* Applies gamma correction to an image.
-* # Arguments
-* * `photon_image` - A PhotonImage that contains a view into the image.
-* * `red` - Gamma value for red channel.
-* * `green` - Gamma value for green channel.
-* * `blue` - Gamma value for blue channel.
-* # Example
-*
-* ```no_run
-* // For example, to turn an image of type `PhotonImage` into a gamma corrected image:
-* use photon_rs::colour_spaces::gamma_correction;
-* use photon_rs::native::open_image;
-*
-* let mut img = open_image("img.jpg").expect("File should open");
-* gamma_correction(&mut img, 2.2, 2.2, 2.2);
-* ```
-* @param {PhotonImage} photon_image
-* @param {number} red
-* @param {number} green
-* @param {number} blue
-*/
-export function gamma_correction(photon_image: PhotonImage, red: number, green: number, blue: number): void;
-/**
-* Image manipulation effects in the LCh colour space
-*
-* Effects include:
-* * **saturate** - Saturation increase.
-* * **desaturate** - Desaturate the image.
-* * **shift_hue** - Hue rotation by a specified number of degrees.
-* * **darken** - Decrease the brightness.
-* * **lighten** - Increase the brightness.
-*
-* # Arguments
-* * `photon_image` - A PhotonImage.
-* * `mode` - The effect desired to be applied. Choose from: `saturate`, `desaturate`, `shift_hue`, `darken`, `lighten`
-* * `amt` - A float value from 0 to 1 which represents the amount the effect should be increased by.
-* # Example
-* ```no_run
-* // For example to increase the saturation by 10%:
-* use photon_rs::colour_spaces::lch;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* lch(&mut img, "saturate", 0.1_f32);
-* ```
-* @param {PhotonImage} photon_image
-* @param {string} mode
-* @param {number} amt
-*/
-export function lch(photon_image: PhotonImage, mode: string, amt: number): void;
-/**
-* Image manipulation effects in the HSL colour space.
-*
-* Effects include:
-* * **saturate** - Saturation increase.
-* * **desaturate** - Desaturate the image.
-* * **shift_hue** - Hue rotation by a specified number of degrees.
-* * **darken** - Decrease the brightness.
-* * **lighten** - Increase the brightness.
-*
-* # Arguments
-* * `photon_image` - A PhotonImage.
-* * `mode` - The effect desired to be applied. Choose from: `saturate`, `desaturate`, `shift_hue`, `darken`, `lighten`
-* * `amt` - A float value from 0 to 1 which represents the amount the effect should be increased by.
-* # Example
-* ```no_run
-* // For example to increase the saturation by 10%:
-* use photon_rs::colour_spaces::hsl;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* hsl(&mut img, "saturate", 0.1_f32);
-* ```
-* @param {PhotonImage} photon_image
-* @param {string} mode
-* @param {number} amt
-*/
-export function hsl(photon_image: PhotonImage, mode: string, amt: number): void;
-/**
-* Image manipulation in the HSV colour space.
-*
-* Effects include:
-* * **saturate** - Saturation increase.
-* * **desaturate** - Desaturate the image.
-* * **shift_hue** - Hue rotation by a specified number of degrees.
-* * **darken** - Decrease the brightness.
-* * **lighten** - Increase the brightness.
-*
-* # Arguments
-* * `photon_image` - A PhotonImage.
-* * `mode` - The effect desired to be applied. Choose from: `saturate`, `desaturate`, `shift_hue`, `darken`, `lighten`
-* * `amt` - A float value from 0 to 1 which represents the amount the effect should be increased by.
-*
-* # Example
-* ```no_run
-* // For example to increase the saturation by 10%:
-* use photon_rs::colour_spaces::hsv;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* hsv(&mut img, "saturate", 0.1_f32);
-* ```
-* @param {PhotonImage} photon_image
-* @param {string} mode
-* @param {number} amt
-*/
-export function hsv(photon_image: PhotonImage, mode: string, amt: number): void;
-/**
-* Shift hue by a specified number of degrees in the HSL colour space.
-* # Arguments
-* * `img` - A PhotonImage.
-* * `mode` - A float value from 0 to 1 which is the amount to shift the hue by, or hue rotate by.
-*
-* # Example
-* ```no_run
-* // For example to hue rotate/shift the hue by 120 degrees in the HSL colour space:
-* use photon_rs::colour_spaces::hue_rotate_hsl;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* hue_rotate_hsl(&mut img, 120_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} degrees
-*/
-export function hue_rotate_hsl(img: PhotonImage, degrees: number): void;
-/**
-* Shift hue by a specified number of degrees in the HSV colour space.
-* # Arguments
-* * `img` - A PhotonImage.
-* * `mode` - A float value from 0 to 1 which is the amount to shift the hue by, or hue rotate by.
-*
-* # Example
-* ```no_run
-* // For example to hue rotate/shift the hue by 120 degrees in the HSV colour space:
-* use photon_rs::colour_spaces::hue_rotate_hsv;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* hue_rotate_hsv(&mut img, 120_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} degrees
-*/
-export function hue_rotate_hsv(img: PhotonImage, degrees: number): void;
-/**
-* Shift hue by a specified number of degrees in the LCh colour space.
-* # Arguments
-* * `img` - A PhotonImage.
-* * `mode` - A float value from 0 to 1 which is the amount to shift the hue by, or hue rotate by.
-*
-* # Example
-* ```no_run
-* // For example to hue rotate/shift the hue by 120 degrees in the HSL colour space:
-* use photon_rs::colour_spaces::hue_rotate_lch;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* hue_rotate_lch(&mut img, 120_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} degrees
-*/
-export function hue_rotate_lch(img: PhotonImage, degrees: number): void;
-/**
-* Increase the image's saturation by converting each pixel's colour to the HSL colour space
-* and increasing the colour's saturation.
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to increase the saturation by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Increasing saturation by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to increase saturation by 10% in the HSL colour space:
-* use photon_rs::colour_spaces::saturate_hsl;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* saturate_hsl(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function saturate_hsl(img: PhotonImage, level: number): void;
-/**
-* Increase the image's saturation in the LCh colour space.
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to increase the saturation by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Increasing saturation by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to increase saturation by 40% in the Lch colour space:
-* use photon_rs::colour_spaces::saturate_lch;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* saturate_lch(&mut img, 0.4_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function saturate_lch(img: PhotonImage, level: number): void;
-/**
-* Increase the image's saturation in the HSV colour space.
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level by which to increase the saturation by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Increasing saturation by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to increase saturation by 30% in the HSV colour space:
-* use photon_rs::colour_spaces::saturate_hsv;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* saturate_hsv(&mut img, 0.3_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function saturate_hsv(img: PhotonImage, level: number): void;
-/**
-* Lighten an image by a specified amount in the LCh colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to lighten the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Lightening by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to lighten an image by 10% in the LCh colour space:
-* use photon_rs::colour_spaces::lighten_lch;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* lighten_lch(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function lighten_lch(img: PhotonImage, level: number): void;
-/**
-* Lighten an image by a specified amount in the HSL colour space.
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to lighten the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Lightening by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to lighten an image by 10% in the HSL colour space:
-* use photon_rs::colour_spaces::lighten_hsl;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* lighten_hsl(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function lighten_hsl(img: PhotonImage, level: number): void;
-/**
-* Lighten an image by a specified amount in the HSV colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to lighten the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Lightening by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to lighten an image by 10% in the HSV colour space:
-* use photon_rs::colour_spaces::lighten_hsv;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* lighten_hsv(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function lighten_hsv(img: PhotonImage, level: number): void;
-/**
-* Darken the image by a specified amount in the LCh colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to darken the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Darkening by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to darken an image by 10% in the LCh colour space:
-* use photon_rs::colour_spaces::darken_lch;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* darken_lch(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function darken_lch(img: PhotonImage, level: number): void;
-/**
-* Darken the image by a specified amount in the HSL colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to darken the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Darkening by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to darken an image by 10% in the HSL colour space:
-* use photon_rs::colour_spaces::darken_hsl;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* darken_hsl(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function darken_hsl(img: PhotonImage, level: number): void;
-/**
-* Darken the image's colours by a specified amount in the HSV colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to darken the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Darkening by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to darken an image by 10% in the HSV colour space:
-* use photon_rs::colour_spaces::darken_hsv;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* darken_hsv(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function darken_hsv(img: PhotonImage, level: number): void;
-/**
-* Desaturate the image by a specified amount in the HSV colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to desaturate the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Desaturating by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to desaturate an image by 10% in the HSV colour space:
-* use photon_rs::colour_spaces::desaturate_hsv;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* desaturate_hsv(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function desaturate_hsv(img: PhotonImage, level: number): void;
-/**
-* Desaturate the image by a specified amount in the HSL colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to desaturate the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Desaturating by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to desaturate an image by 10% in the LCh colour space:
-* use photon_rs::colour_spaces::desaturate_hsl;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* desaturate_hsl(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function desaturate_hsl(img: PhotonImage, level: number): void;
-/**
-* Desaturate the image by a specified amount in the LCh colour space.
-*
-* # Arguments
-* * `img` - A PhotonImage.
-* * `level` - Float value from 0 to 1 representing the level to which to desaturate the image by.
-* The `level` must be from 0 to 1 in floating-point, `f32` format.
-* Desaturating by 80% would be represented by a `level` of 0.8
-*
-* # Example
-* ```no_run
-* // For example to desaturate an image by 10% in the LCh colour space:
-* use photon_rs::colour_spaces::desaturate_lch;
-* use photon_rs::native::open_image;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* desaturate_lch(&mut img, 0.1_f32);
-* ```
-* @param {PhotonImage} img
-* @param {number} level
-*/
-export function desaturate_lch(img: PhotonImage, level: number): void;
-/**
-* Mix image with a single color, supporting passing `opacity`.
-* The algorithm comes from Jimp. See `function mix` and `function colorFn` at following link:
-* https://github.com/oliver-moran/jimp/blob/29679faa597228ff2f20d34c5758e4d2257065a3/packages/plugin-color/src/index.js
-* Specifically, result_value = (mix_color_value - origin_value) * opacity + origin_value =
-* mix_color_value * opacity + (1 - opacity) * origin_value for each
-* of RGB channel.
-*
-* # Arguments
-* * `photon_image` - A PhotonImage that contains a view into the image.
-* * `mix_color` - the color to be mixed in, as an RGB value.
-* * `opacity` - the opacity of color when mixed to image. Float value from 0 to 1.
-* # Example
-*
-* ```no_run
-* // For example, to mix an image with rgb (50, 255, 254) and opacity 0.4:
-* use photon_rs::Rgb;
-* use photon_rs::colour_spaces::mix_with_colour;
-* use photon_rs::native::open_image;
-*
-* let mix_colour = Rgb::new(50_u8, 255_u8, 254_u8);
-* let mut img = open_image("img.jpg").expect("File should open");
-* mix_with_colour(&mut img, mix_colour, 0.4_f32);
-* ```
-* @param {PhotonImage} photon_image
-* @param {Rgb} mix_colour
-* @param {number} opacity
-*/
-export function mix_with_colour(photon_image: PhotonImage, mix_colour: Rgb, opacity: number): void;
 /**
 * Apply a monochrome effect of a certain colour.
 *
@@ -2199,62 +2395,6 @@ export function single_channel_grayscale(photon_image: PhotonImage, channel: num
 * @param {number} threshold
 */
 export function threshold(img: PhotonImage, threshold: number): void;
-/**
-* Add bordered-text to an image.
-* The only font available as of now is Roboto.
-* Note: A graphic design/text-drawing library is currently being developed, so stay tuned.
-*
-* # Arguments
-* * `photon_image` - A PhotonImage.
-* * `text` - Text string to be drawn to the image.
-* * `x` - x-coordinate of where first letter's 1st pixel should be drawn.
-* * `y` - y-coordinate of where first letter's 1st pixel should be drawn.
-*
-* # Example
-*
-* ```no_run
-* // For example to draw the string "Welcome to Photon!" at 10, 10:
-* use photon_rs::native::open_image;
-* use photon_rs::text::draw_text_with_border;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* draw_text_with_border(&mut img, "Welcome to Photon!", 10_u32, 10_u32);
-* ```
-* @param {PhotonImage} photon_img
-* @param {string} text
-* @param {number} x
-* @param {number} y
-*/
-export function draw_text_with_border(photon_img: PhotonImage, text: string, x: number, y: number): void;
-/**
-* Add text to an image.
-* The only font available as of now is Roboto.
-* Note: A graphic design/text-drawing library is currently being developed, so stay tuned.
-*
-* # Arguments
-* * `photon_image` - A PhotonImage.
-* * `text` - Text string to be drawn to the image.
-* * `x` - x-coordinate of where first letter's 1st pixel should be drawn.
-* * `y` - y-coordinate of where first letter's 1st pixel should be drawn.
-*
-* # Example
-*
-* ```no_run
-* // For example to draw the string "Welcome to Photon!" at 10, 10:
-* use photon_rs::native::open_image;
-* use photon_rs::text::draw_text;
-*
-* // Open the image. A PhotonImage is returned.
-* let mut img = open_image("img.jpg").expect("File should open");
-* draw_text(&mut img, "Welcome to Photon!", 10_u32, 10_u32);
-* ```
-* @param {PhotonImage} photon_img
-* @param {string} text
-* @param {number} x
-* @param {number} y
-*/
-export function draw_text(photon_img: PhotonImage, text: string, x: number, y: number): void;
 /**
 * Crop an image.
 *
