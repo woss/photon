@@ -1,6 +1,6 @@
 #### Photon w/ Webpack Demo
 
-This directory contains a pre-configured quick-start demo, which hooks into a Webpack build pipeline, and provides all WASM-friendly functions.
+This directory contains a pre-configured quick-start demo, which hooks into a Webpack build pipeline, and provides all WASM-friendly functions. The setup now uses Webpack 5 with TypeScript, but the core behaviour remains the same.
 
 To get started:
 
@@ -14,21 +14,17 @@ Install the dependencies:
 npm install
 ```
 
-To compile the lib's Rust code to wasm, run:
-```sh
-npm run build
-```
-
 Serve the project locally for development at http://localhost:8080
 ```sh
-npm run start 
+npm run dev
 # This serves the project locally for development at http://localhost:8080
 ```
 
-Then navigate to http://localhost:8080 and you'll see a demo in action. 
+Then navigate to http://localhost:8080 and you'll see a demo in action. The dev server supports hot reloads while you tweak `src/index.ts` or assets.
 
 To build the demo:
 * `npm run build` -- Bundle the project (in production mode).
+* `npm run typecheck` -- Run the TypeScript compiler without emitting files.
 
 #### WebAssembly Use
 To allow for universal communication between the core Rust library and WebAssembly, the functions have been generalised to allow for both native and in-browser use. 
@@ -58,4 +54,4 @@ function filterImage(event) {
   }
 ```
 
-Not all functions available in the core Rust library are available in WebAssembly (currently investigating this). Only WASM-friendly functions have been annotated with #[wasm_bindgen]. All supported WASM functions are displayed in the starter demo. 
+Not all functions available in the core Rust library are available in WebAssembly (currently investigating this). Only WASM-friendly functions have been annotated with #[wasm_bindgen]. All supported WASM functions are displayed in the starter demo.
