@@ -138,8 +138,9 @@ const ensureBlendCanvasSize = () => {
 	if (!canvas2 || !ctx2 || !newimg || !img2) {
 		return;
 	}
-	const targetWidth = Math.min(newimg.width, img2.width);
-	const targetHeight = Math.min(newimg.height, img2.height);
+	const targetWidth = newimg.width >= img2.width ? newimg.width + 1 : img2.width;
+	const targetHeight =
+		newimg.height >= img2.height ? newimg.height + 1 : img2.height;
 	if (canvas2.width !== targetWidth || canvas2.height !== targetHeight) {
 		canvas2.width = targetWidth;
 		canvas2.height = targetHeight;
