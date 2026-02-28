@@ -1,27 +1,26 @@
 {
-  "author": "Silvia O'Dwyer <silviaodwyerdev@gmail.com>",
-  "name": "photon-wasm",
-  "version": "0.1.0",
-  "repository": "https://github.com/silvia-odwyer/photon",
-  "license": "Apache-2.0",
+  "author": "Photon Contributors",
+  "name": "photon-wasm-webpack-demo",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack"
-  },
-  "bin": {
-    "create-rust-webpack": ".bin/create-rust-webpack.js"
-  },
-  "devDependencies": {
-    "clean-webpack-plugin": "^4.0.0",
-    "file-loader": "^6.2.0",
-    "@wasm-tool/wasm-pack-plugin": "1.7.0",
-    "html-webpack-plugin": "^5.6.3",
-    "webpack": "^5",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.2"
+    "dev": "webpack serve --mode development --config webpack.config.js",
+    "build": "webpack --mode production --config webpack.config.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@silvia-odwyer/photon": "^0.3.3",
-    "jimp": "^0.6.4"
+    "@silvia-odwyer/photon": "^0.3.3"
+  },
+  "devDependencies": {
+    "@types/webpack-dev-server": "^4.7.2",
+    "@types/webpack-env": "^1.18.8",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.4",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.2",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   }
 }
