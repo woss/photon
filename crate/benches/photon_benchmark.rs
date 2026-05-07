@@ -1,8 +1,8 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use photon_rs::native::{open_image, save_image};
-use photon_rs::transform::{resize, SamplingFilter};
 use photon_rs::adjustments::*;
 use photon_rs::corrections::*;
+use photon_rs::native::{open_image, save_image};
+use photon_rs::transform::{resize, SamplingFilter};
 use std::time::Duration;
 
 fn criterion_benchmark(c: &mut Criterion) {
@@ -20,7 +20,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     // Load test image for benchmarking (same as other benchmarks)
     let test_image = open_image("examples/input_images/underground.jpg")
         .expect("Test image should load");
-    
+
     group.bench_function("apply_exposure", |b| {
         let mut img = test_image.clone();
         b.iter(|| apply_exposure(&mut img, 1.5))
@@ -63,7 +63,11 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     group.bench_function("apply_color_grading", |b| {
         let mut img = test_image.clone();
-        b.iter(|| apply_color_grading(&mut img, 200.0, 20.0, -10.0, 0.0, 0.0, 0.0, 30.0, 15.0, 5.0, 50.0, 0.0))
+        b.iter(|| {
+            apply_color_grading(
+                &mut img, 200.0, 20.0, -10.0, 0.0, 0.0, 0.0, 30.0, 15.0, 5.0, 50.0, 0.0,
+            )
+        })
     });
 
     group.bench_function("apply_sharpening", |b| {
@@ -100,7 +104,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         let lut: Vec<u8> = (0..256).map(|i| i as u8).collect();
         b.iter_with_setup(
             || test_image.clone(),
-            |mut img| apply_tone_curve(&mut img, lut.clone())
+            |mut img| apply_tone_curve(&mut img, lut.clone()),
         )
     });
 

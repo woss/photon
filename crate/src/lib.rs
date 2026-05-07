@@ -549,8 +549,8 @@ fn set_panic_hook() {
 pub mod adjustments;
 pub mod channels;
 pub mod colour_spaces;
-pub mod corrections;
 pub mod conv;
+pub mod corrections;
 pub mod effects;
 pub mod filters;
 pub mod helpers;

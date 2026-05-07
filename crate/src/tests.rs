@@ -7,10 +7,10 @@ mod test {
     use crate::channels::*;
     use crate::colour_spaces::*;
     use crate::corrections::*;
-    use crate::transform::{resample, seam_carve};
-    use crate::PhotonImage;
     use crate::effects::{bayer_dither, vignette};
     use crate::noise::film_grain;
+    use crate::transform::{resample, seam_carve};
+    use crate::PhotonImage;
     #[test]
     fn test_alter_red_channel() {
         let width = 4;
@@ -425,13 +425,13 @@ mod test {
     fn test_apply_exposure() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_exposure(&mut img, 1.0);
-        
+
         // After +1 EV exposure, pixels should be brighter
         // We can't do exact comparison due to gamma correction, but we can check it changed
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero exposure (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -443,12 +443,12 @@ mod test {
     fn test_apply_white_balance() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_white_balance(&mut img, 20.0, 10.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero adjustment (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -460,12 +460,12 @@ mod test {
     fn test_apply_vibrance() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_vibrance(&mut img, 30.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero vibrance (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -477,12 +477,12 @@ mod test {
     fn test_apply_clarity() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_clarity(&mut img, 25.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero clarity (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -494,12 +494,12 @@ mod test {
     fn test_apply_texture() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_texture(&mut img, 30.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero texture (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -511,12 +511,12 @@ mod test {
     fn test_apply_dehaze() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_dehaze(&mut img, 50.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero dehaze (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -528,12 +528,12 @@ mod test {
     fn test_apply_vignette() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_vignette(&mut img, 50.0, 30.0, 50.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero strength (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -545,12 +545,12 @@ mod test {
     fn test_apply_tone_zones() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_tone_zones(&mut img, 10, 20, -10, 5);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero adjustments (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -562,10 +562,12 @@ mod test {
     fn test_apply_color_grading() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         // Use parameters that will definitely change the image (non-zero saturation and luminance)
-        apply_color_grading(&mut img, 200.0, 50.0, -20.0, 0.0, 30.0, 10.0, 30.0, 40.0, 15.0, 50.0, 0.0);
-        
+        apply_color_grading(
+            &mut img, 200.0, 50.0, -20.0, 0.0, 30.0, 10.0, 30.0, 40.0, 15.0, 50.0, 0.0,
+        );
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
     }
@@ -574,12 +576,12 @@ mod test {
     fn test_apply_sharpening() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_sharpening(&mut img, 100.0, 1.0, 2.0, 50.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero amount (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -591,12 +593,12 @@ mod test {
     fn test_apply_noise_reduction() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_noise_reduction(&mut img, 40.0, 50.0, 50.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero noise reduction (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -608,12 +610,12 @@ mod test {
     fn test_apply_noise_reduction_bilateral() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_noise_reduction_bilateral(&mut img, 40.0, 50.0, 50.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero noise reduction (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -625,12 +627,12 @@ mod test {
     fn test_apply_noise_reduction_wavelets() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_noise_reduction_wavelets(&mut img, 50.0, 30.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero strength (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -642,12 +644,12 @@ mod test {
     fn test_apply_noise_reduction_median() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_noise_reduction_median(&mut img, 2);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero radius (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -659,12 +661,12 @@ mod test {
     fn test_apply_noise_reduction_nlm() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_noise_reduction_nlm(&mut img, 50.0, 3, 5);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero strength (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
@@ -676,16 +678,16 @@ mod test {
     fn test_apply_tone_curve() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         // Create a non-linear tone curve (brightening curve) that will definitely change the image
         let mut lut = Vec::new();
         for i in 0..256 {
             // Brightening curve: output is brighter than input
             lut.push((i as f32 * 1.2).min(255.0) as u8);
         }
-        
+
         apply_tone_curve(&mut img, lut);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
     }
@@ -696,22 +698,21 @@ mod test {
         let width = 4;
         let height = 4;
         let mut raw_pix = vec![
-            150, 50, 150, 255,  // Purple pixel (high R and B, low G)
-            50, 150, 50, 255,   // Green pixel (high G, low R and B)
-            131, 131, 139, 255, 135, 134, 137, 255, 138, 134, 130,
-            255, 126, 125, 119, 255, 131, 134, 129, 255, 137, 134, 132, 255, 130, 126,
-            130, 255, 132, 125, 132, 255, 122, 142, 129, 255, 134, 135, 128, 255, 138,
-            120, 125, 255, 125, 134, 110, 255, 121, 122, 137, 255, 141, 140, 141, 255,
-            125, 144, 120, 255,
+            150, 50, 150, 255, // Purple pixel (high R and B, low G)
+            50, 150, 50, 255, // Green pixel (high G, low R and B)
+            131, 131, 139, 255, 135, 134, 137, 255, 138, 134, 130, 255, 126, 125, 119,
+            255, 131, 134, 129, 255, 137, 134, 132, 255, 130, 126, 130, 255, 132, 125,
+            132, 255, 122, 142, 129, 255, 134, 135, 128, 255, 138, 120, 125, 255, 125,
+            134, 110, 255, 121, 122, 137, 255, 141, 140, 141, 255, 125, 144, 120, 255,
         ];
         let mut img = PhotonImage::new(raw_pix.clone(), width, height);
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_chromatic_aberration(&mut img, 50.0, 30.0);
-        
+
         // Should change the image (purple and green pixels should be corrected)
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero amounts (should not change)
         let mut img2 = PhotonImage::new(raw_pix, width, height);
         let original_pixels2 = img2.raw_pixels.clone();
@@ -723,22 +724,22 @@ mod test {
     fn test_apply_lens_correction() {
         let mut img = get_test_image();
         let original_pixels = img.raw_pixels.clone();
-        
+
         apply_lens_correction(&mut img, -20.0, 30.0);
-        
+
         // Should change the image
         assert_ne!(img.raw_pixels, original_pixels);
-        
+
         // Test zero amounts (should not change)
         let mut img2 = get_test_image();
         let original_pixels2 = img2.raw_pixels.clone();
         apply_lens_correction(&mut img2, 0.0, 0.0);
         assert_eq!(img2.raw_pixels, original_pixels2);
     }
-    
+
     #[test]
     fn test_bayer_dither_depth1_binary_output() {
-        let width  = 8_u32;
+        let width = 8_u32;
         let height = 8_u32;
         let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128_u8, 128_u8, 255_u8])
             .take((width * height) as usize)
@@ -751,23 +752,26 @@ mod test {
         let out = img.get_raw_pixels();
         for i in (0..out.len()).step_by(4) {
             assert!(
-                out[i]     == 0 || out[i]     == 255,
-                "R channel value {} is not binary at depth=1", out[i]
+                out[i] == 0 || out[i] == 255,
+                "R channel value {} is not binary at depth=1",
+                out[i]
             );
             assert!(
                 out[i + 1] == 0 || out[i + 1] == 255,
-                "G channel value {} is not binary at depth=1", out[i + 1]
+                "G channel value {} is not binary at depth=1",
+                out[i + 1]
             );
             assert!(
                 out[i + 2] == 0 || out[i + 2] == 255,
-                "B channel value {} is not binary at depth=1", out[i + 2]
+                "B channel value {} is not binary at depth=1",
+                out[i + 2]
             );
         }
     }
 
     #[test]
     fn test_film_grain_preserves_dimensions() {
-        let width  = 4_u32;
+        let width = 4_u32;
         let height = 4_u32;
         let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128_u8, 128_u8, 255_u8])
             .take((width * height) as usize)
@@ -777,8 +781,16 @@ mod test {
         let mut img = PhotonImage::new(raw_pix, width, height);
         film_grain(&mut img, 0.5, true, 42);
 
-        assert_eq!(img.get_width(),  width,  "width must be unchanged after film_grain");
-        assert_eq!(img.get_height(), height, "height must be unchanged after film_grain");
+        assert_eq!(
+            img.get_width(),
+            width,
+            "width must be unchanged after film_grain"
+        );
+        assert_eq!(
+            img.get_height(),
+            height,
+            "height must be unchanged after film_grain"
+        );
         assert_eq!(
             img.get_raw_pixels().len(),
             (width * height * 4) as usize,
@@ -787,7 +799,7 @@ mod test {
     }
     #[test]
     fn test_film_grain_deterministic_with_fixed_seed() {
-        let width  = 4_u32;
+        let width = 4_u32;
         let height = 4_u32;
         let raw_pix: Vec<u8> = std::iter::repeat([100_u8, 150_u8, 200_u8, 255_u8])
             .take((width * height) as usize)
@@ -795,7 +807,7 @@ mod test {
             .collect();
 
         let mut img_a = PhotonImage::new(raw_pix.clone(), width, height);
-        let mut img_b = PhotonImage::new(raw_pix,         width, height);
+        let mut img_b = PhotonImage::new(raw_pix, width, height);
 
         film_grain(&mut img_a, 0.3, false, 12345);
         film_grain(&mut img_b, 0.3, false, 12345);
@@ -808,9 +820,9 @@ mod test {
     }
     #[test]
     fn test_vignette_corners_darker_than_centre() {
-        let width  = 6_u32;
+        let width = 6_u32;
         let height = 6_u32;
-        let fill   = 200_u8;
+        let fill = 200_u8;
         let raw_pix: Vec<u8> = std::iter::repeat([fill, fill, fill, 255_u8])
             .take((width * height) as usize)
             .flatten()
@@ -823,12 +835,13 @@ mod test {
 
         let corner_r = out[0] as i32;
         let centre_idx = (3 * width as usize + 3) * 4;
-        let centre_r   = out[centre_idx] as i32;
+        let centre_r = out[centre_idx] as i32;
 
         assert!(
             corner_r < centre_r,
             "corner pixel ({}) should be darker than centre pixel ({}) after vignette",
-            corner_r, centre_r
+            corner_r,
+            centre_r
         );
     }
 
@@ -836,7 +849,7 @@ mod test {
     fn test_cinematic_filter_with_vignette_smoke() {
         use crate::filters::cinematic;
 
-        let width  = 6_u32;
+        let width = 6_u32;
         let height = 6_u32;
         let raw_pix: Vec<u8> = std::iter::repeat([120_u8, 80_u8, 60_u8, 255_u8])
             .take((width * height) as usize)
@@ -846,18 +859,15 @@ mod test {
         let mut img = PhotonImage::new(raw_pix, width, height);
         cinematic(&mut img);
 
-        assert_eq!(img.get_width(),  width);
+        assert_eq!(img.get_width(), width);
         assert_eq!(img.get_height(), height);
-        assert_eq!(
-            img.get_raw_pixels().len(),
-            (width * height * 4) as usize
-        );
+        assert_eq!(img.get_raw_pixels().len(), (width * height * 4) as usize);
     }
     #[test]
     fn test_cinematic_filter_smoke() {
         use crate::filters::cinematic;
 
-        let width  = 4_u32;
+        let width = 4_u32;
         let height = 4_u32;
         let raw_pix: Vec<u8> = std::iter::repeat([120_u8, 80_u8, 60_u8, 255_u8])
             .take((width * height) as usize)
@@ -865,13 +875,10 @@ mod test {
             .collect();
 
         let mut img = PhotonImage::new(raw_pix, width, height);
-        cinematic(&mut img);  
+        cinematic(&mut img);
 
-        assert_eq!(img.get_width(),  width);
+        assert_eq!(img.get_width(), width);
         assert_eq!(img.get_height(), height);
-        assert_eq!(
-            img.get_raw_pixels().len(),
-            (width * height * 4) as usize
-        );
+        assert_eq!(img.get_raw_pixels().len(), (width * height * 4) as usize);
     }
 }
