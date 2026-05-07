@@ -3,9 +3,10 @@
 use crate::channels::alter_channels;
 use crate::colour_spaces;
 use crate::colour_spaces::mix_with_colour;
-use crate::effects::{adjust_contrast, duotone, inc_brightness};
+use crate::effects::{adjust_contrast, duotone, inc_brightness, vignette};
 use crate::monochrome;
 use crate::{PhotonImage, Rgb};
+use crate::noise::film_grain;
 
 #[cfg(feature = "enable_wasm")]
 use wasm_bindgen::prelude::*;
@@ -154,6 +155,7 @@ pub fn filter(img: &mut PhotonImage, filter_name: &str) {
         "firenze" => firenze(img),
         "obsidian" => obsidian(img),
         "lofi" => lofi(img),
+        "cinematic" => cinematic(img),
         _ => monochrome::monochrome(img, 90, 40, 80),
     };
 }
@@ -420,4 +422,34 @@ pub fn firenze(img: &mut PhotonImage) {
 pub fn obsidian(img: &mut PhotonImage) {
     monochrome::grayscale(img);
     adjust_contrast(img, 25.0);
+}
+
+/// Apply a cinematic film look to an image.
+///
+/// # Example
+///
+/// ```no_run
+/// use photon_rs::filters::cinematic;
+/// use photon_rs::native::open_image;
+///
+/// let mut img = open_image("img.jpg").expect("File should open");
+/// cinematic(&mut img);
+/// ```
+///
+/// The same effect is also available through the generic dispatcher:
+///
+/// ```no_run
+/// use photon_rs::filters::filter;
+/// use photon_rs::native::open_image;
+///
+/// let mut img = open_image("img.jpg").expect("File should open");
+/// filter(&mut img, "cinematic");
+/// ```
+#[cfg_attr(feature = "enable_wasm", wasm_bindgen)]
+pub fn cinematic(img: &mut PhotonImage) {
+    adjust_contrast(img, 35.0);
+    let amber = Rgb::new(255, 160, 20);
+    mix_with_colour(img, amber, 0.12);
+    film_grain(img, 0.15, false, 0xF1_1F);
+    vignette(img, 0.65);
 }

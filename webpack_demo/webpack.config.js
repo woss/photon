@@ -1,83 +1,59 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const dist = path.resolve(__dirname, "dist");
-const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-
-var mainConfig = {
-  entry: "./js/index.js",
+/** @type {import('webpack').Configuration} */
+module.exports = {
+  entry: path.resolve(__dirname, 'src/index.ts'),
   output: {
-    path: dist,
-    filename: "bundle.js"
+    filename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
+    clean: true,
   },
-  devServer: {
-    static: {
-      directory: dist
-    },
+  resolve: {
+    extensions: ['.ts', '.js', '.wasm'],
   },
-  mode: "none",  
-  experiments: {
-    asyncWebAssembly: true,
-  },
-  ignoreWarnings: [
-    (warning) => {
-      const msg = warning.message;
-      return (
-        msg.includes("The following asset(s) exceed the recommended size limit (244 KiB).")
-      );
-    },
-  ],
-  
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
       },
-       {
-         test: /\.(png|svg|jpg|gif)$/,
-         use: [
-           'file-loader'
-         ]
-       }
-    ]
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.wasm$/i,
+        type: 'asset/resource',
+      },
+    ],
   },
-  resolve: {
-     extensions: [".js", ".wasm"]
+  experiments: {
+    asyncWebAssembly: true,
+    topLevelAwait: true,
   },
+  devtool: 'source-map',
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'index.html'
+      template: path.resolve(__dirname, 'index.html'),
     }),
-
-    new WasmPackPlugin({
-      crateDirectory: path.resolve(__dirname, "../crate"),
-      // WasmPackPlugin defaults to compiling in "dev" profile. To change that, use forceMode: 'release':
-      forceMode: 'release'
-    }),
-  ]
+  ],
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, 'dist'),
+    },
+    hot: true,
+    port: 8080,
+    open: true,
+    historyApiFallback: true,
+  },
+  performance: {
+    hints: false,
+  },
 };
-
-// const workerConfig = {
-//   entry: "./js/worker.js",
-//   target: "webworker",
-//   plugins: [
-//     new WasmPackPlugin({
-//       crateDirectory: path.resolve(__dirname, "../crate")
-//     })
-//   ],
-//   resolve: {
-//     extensions: [".js", ".wasm"]
-//   },
-//   output: {
-//     path: dist,
-//     filename: "worker.js"
-//   }
-// };
-
-
-module.exports = [mainConfig]
