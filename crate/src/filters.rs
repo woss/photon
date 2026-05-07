@@ -5,8 +5,8 @@ use crate::colour_spaces;
 use crate::colour_spaces::mix_with_colour;
 use crate::effects::{adjust_contrast, duotone, inc_brightness, vignette};
 use crate::monochrome;
-use crate::{PhotonImage, Rgb};
 use crate::noise::film_grain;
+use crate::{PhotonImage, Rgb};
 
 #[cfg(feature = "enable_wasm")]
 use wasm_bindgen::prelude::*;

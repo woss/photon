@@ -1248,14 +1248,14 @@ pub fn dither(photon_image: &mut PhotonImage, depth: u32) {
 
 /// Bayer ordered dithering LUT
 static BAYER_8X8: [[u8; 8]; 8] = [
-    [  0,  32,   8,  40,   2,  34,  10,  42],
-    [ 48,  16,  56,  24,  50,  18,  58,  26],
-    [ 12,  44,   4,  36,  14,  46,   6,  38],
-    [ 60,  28,  52,  20,  62,  30,  54,  22],
-    [  3,  35,  11,  43,   1,  33,   9,  41],
-    [ 51,  19,  59,  27,  49,  17,  57,  25],
-    [ 15,  47,   7,  39,  13,  45,   5,  37],
-    [ 63,  31,  55,  23,  61,  29,  53,  21],
+    [0, 32, 8, 40, 2, 34, 10, 42],
+    [48, 16, 56, 24, 50, 18, 58, 26],
+    [12, 44, 4, 36, 14, 46, 6, 38],
+    [60, 28, 52, 20, 62, 30, 54, 22],
+    [3, 35, 11, 43, 1, 33, 9, 41],
+    [51, 19, 59, 27, 49, 17, 57, 25],
+    [15, 47, 7, 39, 13, 45, 5, 37],
+    [63, 31, 55, 23, 61, 29, 53, 21],
 ];
 
 /// Apply Bayer ordered dithering to an image.
@@ -1287,12 +1287,12 @@ static BAYER_8X8: [[u8; 8]; 8] = [
 /// ```
 #[cfg_attr(feature = "enable_wasm", wasm_bindgen)]
 pub fn bayer_dither(photon_image: &mut PhotonImage, bit_depth: u32, spread: f32) {
-    let depth   = bit_depth.clamp(1,8);
-    let spread  = spread.clamp(0.0,1.0);
+    let depth = bit_depth.clamp(1, 8);
+    let spread = spread.clamp(0.0, 1.0);
 
-    let levels   = (1u32 << depth) as f32;
-    let step     = 255.0_f32 /(levels-1.0);
-    let inv_step = 1.0_f32 /step;
+    let levels = (1u32 << depth) as f32;
+    let step = 255.0_f32 / (levels - 1.0);
+    let inv_step = 1.0_f32 / step;
 
     // `half_spread` shifts the threshold so that the Bayer bias is centred
     // around zero: threshold values map from [-127.5*spread, +127.5*spread].
@@ -1301,27 +1301,32 @@ pub fn bayer_dither(photon_image: &mut PhotonImage, bit_depth: u32, spread: f32)
     let half_spread = 127.5_f32 * spread;
 
     let width = photon_image.get_width() as usize;
-    let buf   = photon_image.raw_pixels.as_mut_slice();
-    let end   = buf.len();
+    let buf = photon_image.raw_pixels.as_mut_slice();
+    let end = buf.len();
 
     let mut x: usize = 0;
     let mut y: usize = 0;
 
     for i in (0..end).step_by(4) {
         // BAYER_8X8 stores values in [0, 63]; scale to a signed bias in [-half_spread, +half_spread].
-        let raw_threshold = BAYER_8X8[y&7][x&7] as f32; // 0.0 – 63.0
-        let bias =(raw_threshold /63.0-0.5) *2.0 *half_spread;
+        let raw_threshold = BAYER_8X8[y & 7][x & 7] as f32; // 0.0 – 63.0
+        let bias = (raw_threshold / 63.0 - 0.5) * 2.0 * half_spread;
 
-        let r = buf[i]   as f32;
-        let g = buf[i+1] as f32;
-        let b = buf[i+2] as f32;
+        let r = buf[i] as f32;
+        let g = buf[i + 1] as f32;
+        let b = buf[i + 2] as f32;
 
-        buf[i]   =(((r+bias) *inv_step +0.5).floor() *step).clamp(0.0, 255.0) as u8;
-        buf[i+1] =(((g+bias) *inv_step +0.5).floor() *step).clamp(0.0, 255.0) as u8;
-        buf[i+2] =(((b+bias) *inv_step +0.5).floor() *step).clamp(0.0, 255.0) as u8;
+        buf[i] = (((r + bias) * inv_step + 0.5).floor() * step).clamp(0.0, 255.0) as u8;
+        buf[i + 1] =
+            (((g + bias) * inv_step + 0.5).floor() * step).clamp(0.0, 255.0) as u8;
+        buf[i + 2] =
+            (((b + bias) * inv_step + 0.5).floor() * step).clamp(0.0, 255.0) as u8;
 
-        x +=1;
-        if x == width { x = 0; y += 1;}
+        x += 1;
+        if x == width {
+            x = 0;
+            y += 1;
+        }
     }
 }
 
@@ -1381,17 +1386,19 @@ pub fn vignette(photon_image: &mut PhotonImage, intensity: f32) {
         return;
     }
 
-    let width  = photon_image.get_width()  as usize;
+    let width = photon_image.get_width() as usize;
     let height = photon_image.get_height() as usize;
 
-    let cx = (width  / 2) as i64;
+    let cx = (width / 2) as i64;
     let cy = (height / 2) as i64;
- 
+
     let corner_dx = cx;
-    let corner_dy = cy; 
+    let corner_dy = cy;
     let max_dist_sq = (corner_dx * corner_dx + corner_dy * corner_dy) as f32;
 
-    if max_dist_sq == 0.0 {return;}
+    if max_dist_sq == 0.0 {
+        return;
+    }
     let inv_max_dist_sq = intensity / max_dist_sq;
 
     let buf = photon_image.raw_pixels.as_mut_slice();
@@ -1407,7 +1414,7 @@ pub fn vignette(photon_image: &mut PhotonImage, intensity: f32) {
 
         let factor = (1.0_f32 - dist_sq * inv_max_dist_sq).clamp(0.0, 1.0);
 
-        buf[i]     = (buf[i]     as f32 * factor) as u8;
+        buf[i] = (buf[i] as f32 * factor) as u8;
         buf[i + 1] = (buf[i + 1] as f32 * factor) as u8;
         buf[i + 2] = (buf[i + 2] as f32 * factor) as u8;
         x += 1;
