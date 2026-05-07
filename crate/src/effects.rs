@@ -1246,6 +1246,85 @@ pub fn dither(photon_image: &mut PhotonImage, depth: u32) {
     }
 }
 
+/// Bayer ordered dithering LUT
+static BAYER_8X8: [[u8; 8]; 8] = [
+    [  0,  32,   8,  40,   2,  34,  10,  42],
+    [ 48,  16,  56,  24,  50,  18,  58,  26],
+    [ 12,  44,   4,  36,  14,  46,   6,  38],
+    [ 60,  28,  52,  20,  62,  30,  54,  22],
+    [  3,  35,  11,  43,   1,  33,   9,  41],
+    [ 51,  19,  59,  27,  49,  17,  57,  25],
+    [ 15,  47,   7,  39,  13,  45,   5,  37],
+    [ 63,  31,  55,  23,  61,  29,  53,  21],
+];
+
+/// Apply Bayer ordered dithering to an image.
+///
+/// Ordered dithering quantizes each pixel's colour channels independently by
+/// comparing the channel value (plus a spatially-varying threshold from the
+/// 8×8 Bayer matrix) against the nearest quantization level.  Unlike
+/// Floyd-Steinberg error diffusion, every pixel is processed in isolation,
+/// making this algorithm branch-free and cache-friendly.
+///
+/// # Arguments
+/// * `photon_image` - A mutable reference to the [`PhotonImage`] to process.
+/// * `bit_depth`    - Target bits per channel (clamped to 1–8).  
+///                    `1` → 2 levels (pure black/white per channel),  
+///                    `4` → 16 levels, `8` → no quantization.
+/// * `spread`       - Dithering spread in the range `[0.0, 1.0]`.  
+///                    `1.0` is the canonical Bayer threshold; lower values
+///                    reduce the visible halftone pattern for a subtler look.
+///
+/// # Example
+///
+/// ```no_run
+/// use photon_rs::effects::bayer_dither;
+/// use photon_rs::native::open_image;
+///
+/// let mut img = open_image("img.jpg").expect("File should open");
+/// // 2-bit depth, full Bayer spread — strong ordered dither
+/// bayer_dither(&mut img, 2, 1.0);
+/// ```
+#[cfg_attr(feature = "enable_wasm", wasm_bindgen)]
+pub fn bayer_dither(photon_image: &mut PhotonImage, bit_depth: u32, spread: f32) {
+    let depth   = bit_depth.clamp(1,8);
+    let spread  = spread.clamp(0.0,1.0);
+
+    let levels   = (1u32 << depth) as f32;
+    let step     = 255.0_f32 /(levels-1.0);
+    let inv_step = 1.0_f32 /step;
+
+    // `half_spread` shifts the threshold so that the Bayer bias is centred
+    // around zero: threshold values map from [-127.5*spread, +127.5*spread].
+    // Multiplying by `spread` here means the user can dial down the dithering
+    // without any extra work in the pixel loop.
+    let half_spread = 127.5_f32 * spread;
+
+    let width = photon_image.get_width() as usize;
+    let buf   = photon_image.raw_pixels.as_mut_slice();
+    let end   = buf.len();
+
+    let mut x: usize = 0;
+    let mut y: usize = 0;
+
+    for i in (0..end).step_by(4) {
+        // BAYER_8X8 stores values in [0, 63]; scale to a signed bias in [-half_spread, +half_spread].
+        let raw_threshold = BAYER_8X8[y&7][x&7] as f32; // 0.0 – 63.0
+        let bias =(raw_threshold /63.0-0.5) *2.0 *half_spread;
+
+        let r = buf[i]   as f32;
+        let g = buf[i+1] as f32;
+        let b = buf[i+2] as f32;
+
+        buf[i]   =(((r+bias) *inv_step +0.5).floor() *step).clamp(0.0, 255.0) as u8;
+        buf[i+1] =(((g+bias) *inv_step +0.5).floor() *step).clamp(0.0, 255.0) as u8;
+        buf[i+2] =(((b+bias) *inv_step +0.5).floor() *step).clamp(0.0, 255.0) as u8;
+
+        x +=1;
+        if x == width { x = 0; y += 1;}
+    }
+}
+
 fn create_gradient_map(color_a: Rgb, color_b: Rgb) -> Vec<Rgb> {
     let mut gradient_map = vec![Rgb::new(0, 0, 0); 256];
 
@@ -1279,5 +1358,62 @@ pub fn duotone(photon_image: &mut PhotonImage, color_a: Rgb, color_b: Rgb) {
         px[0] = mapped_luma.r;
         px[1] = mapped_luma.g;
         px[2] = mapped_luma.b;
+    }
+}
+
+/// Apply a radial vignette effect to an image.
+///
+/// # Example
+///
+/// ```no_run
+/// use photon_rs::effects::vignette;
+/// use photon_rs::native::open_image;
+///
+/// let mut img = open_image("img.jpg").expect("File should open");
+/// // Moderate vignette — corners darken by ~60 %
+/// vignette(&mut img, 0.6);
+/// ```
+#[cfg_attr(feature = "enable_wasm", wasm_bindgen)]
+pub fn vignette(photon_image: &mut PhotonImage, intensity: f32) {
+    let intensity = intensity.clamp(0.0, 1.0);
+
+    if intensity == 0.0 {
+        return;
+    }
+
+    let width  = photon_image.get_width()  as usize;
+    let height = photon_image.get_height() as usize;
+
+    let cx = (width  / 2) as i64;
+    let cy = (height / 2) as i64;
+ 
+    let corner_dx = cx;
+    let corner_dy = cy; 
+    let max_dist_sq = (corner_dx * corner_dx + corner_dy * corner_dy) as f32;
+
+    if max_dist_sq == 0.0 {return;}
+    let inv_max_dist_sq = intensity / max_dist_sq;
+
+    let buf = photon_image.raw_pixels.as_mut_slice();
+
+    let mut x: usize = 0;
+    let mut y: usize = 0;
+
+    let end = buf.len();
+    for i in (0..end).step_by(4) {
+        let dx = x as i64 - cx;
+        let dy = y as i64 - cy;
+        let dist_sq = (dx * dx + dy * dy) as f32;
+
+        let factor = (1.0_f32 - dist_sq * inv_max_dist_sq).clamp(0.0, 1.0);
+
+        buf[i]     = (buf[i]     as f32 * factor) as u8;
+        buf[i + 1] = (buf[i + 1] as f32 * factor) as u8;
+        buf[i + 2] = (buf[i + 2] as f32 * factor) as u8;
+        x += 1;
+        if x == width {
+            x = 0;
+            y += 1;
+        }
     }
 }

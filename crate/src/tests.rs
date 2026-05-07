@@ -7,7 +7,8 @@ mod test {
     use crate::colour_spaces::*;
     use crate::transform::{resample, seam_carve};
     use crate::PhotonImage;
-
+    use crate::effects::{bayer_dither, vignette};
+    use crate::noise::film_grain;
     #[test]
     fn test_alter_red_channel() {
         let width = 4;
@@ -379,7 +380,6 @@ mod test {
             assert_eq!(result.get_raw_pixels(), correct_pix);
         }
         {
-            // Downsample width and upsample height.
             let new_w: usize = 160;
             let new_h: usize = 320;
             let channels = 4;
@@ -392,7 +392,6 @@ mod test {
             assert_eq!(result.get_raw_pixels(), correct_pix);
         }
         {
-            // Upsample width and downsample height.
             let new_w: usize = 320;
             let new_h: usize = 120;
             let channels = 4;
@@ -404,5 +403,144 @@ mod test {
             assert_eq!(result.get_height(), new_h as u32);
             assert_eq!(result.get_raw_pixels(), correct_pix);
         }
+    }
+    
+    #[test]
+    fn test_bayer_dither_depth1_binary_output() {
+        let width  = 8_u32;
+        let height = 8_u32;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128_u8, 128_u8, 255_u8])
+            .take((width * height) as usize)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        bayer_dither(&mut img, 1, 1.0);
+
+        let out = img.get_raw_pixels();
+        for i in (0..out.len()).step_by(4) {
+            assert!(
+                out[i]     == 0 || out[i]     == 255,
+                "R channel value {} is not binary at depth=1", out[i]
+            );
+            assert!(
+                out[i + 1] == 0 || out[i + 1] == 255,
+                "G channel value {} is not binary at depth=1", out[i + 1]
+            );
+            assert!(
+                out[i + 2] == 0 || out[i + 2] == 255,
+                "B channel value {} is not binary at depth=1", out[i + 2]
+            );
+        }
+    }
+
+    #[test]
+    fn test_film_grain_preserves_dimensions() {
+        let width  = 4_u32;
+        let height = 4_u32;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128_u8, 128_u8, 255_u8])
+            .take((width * height) as usize)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        film_grain(&mut img, 0.5, true, 42);
+
+        assert_eq!(img.get_width(),  width,  "width must be unchanged after film_grain");
+        assert_eq!(img.get_height(), height, "height must be unchanged after film_grain");
+        assert_eq!(
+            img.get_raw_pixels().len(),
+            (width * height * 4) as usize,
+            "pixel buffer length must be unchanged after film_grain"
+        );
+    }
+    #[test]
+    fn test_film_grain_deterministic_with_fixed_seed() {
+        let width  = 4_u32;
+        let height = 4_u32;
+        let raw_pix: Vec<u8> = std::iter::repeat([100_u8, 150_u8, 200_u8, 255_u8])
+            .take((width * height) as usize)
+            .flatten()
+            .collect();
+
+        let mut img_a = PhotonImage::new(raw_pix.clone(), width, height);
+        let mut img_b = PhotonImage::new(raw_pix,         width, height);
+
+        film_grain(&mut img_a, 0.3, false, 12345);
+        film_grain(&mut img_b, 0.3, false, 12345);
+
+        assert_eq!(
+            img_a.get_raw_pixels(),
+            img_b.get_raw_pixels(),
+            "film_grain must produce identical output for the same seed"
+        );
+    }
+    #[test]
+    fn test_vignette_corners_darker_than_centre() {
+        let width  = 6_u32;
+        let height = 6_u32;
+        let fill   = 200_u8;
+        let raw_pix: Vec<u8> = std::iter::repeat([fill, fill, fill, 255_u8])
+            .take((width * height) as usize)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        vignette(&mut img, 0.8);
+
+        let out = img.get_raw_pixels();
+
+        let corner_r = out[0] as i32;
+        let centre_idx = (3 * width as usize + 3) * 4;
+        let centre_r   = out[centre_idx] as i32;
+
+        assert!(
+            corner_r < centre_r,
+            "corner pixel ({}) should be darker than centre pixel ({}) after vignette",
+            corner_r, centre_r
+        );
+    }
+
+    #[test]
+    fn test_cinematic_filter_with_vignette_smoke() {
+        use crate::filters::cinematic;
+
+        let width  = 6_u32;
+        let height = 6_u32;
+        let raw_pix: Vec<u8> = std::iter::repeat([120_u8, 80_u8, 60_u8, 255_u8])
+            .take((width * height) as usize)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        cinematic(&mut img);
+
+        assert_eq!(img.get_width(),  width);
+        assert_eq!(img.get_height(), height);
+        assert_eq!(
+            img.get_raw_pixels().len(),
+            (width * height * 4) as usize
+        );
+    }
+    #[test]
+    fn test_cinematic_filter_smoke() {
+        use crate::filters::cinematic;
+
+        let width  = 4_u32;
+        let height = 4_u32;
+        let raw_pix: Vec<u8> = std::iter::repeat([120_u8, 80_u8, 60_u8, 255_u8])
+            .take((width * height) as usize)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        cinematic(&mut img);  
+
+        assert_eq!(img.get_width(),  width);
+        assert_eq!(img.get_height(), height);
+        assert_eq!(
+            img.get_raw_pixels().len(),
+            (width * height * 4) as usize
+        );
     }
 }
