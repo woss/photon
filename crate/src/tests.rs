@@ -881,4 +881,535 @@ mod test {
         assert_eq!(img.get_height(), height);
         assert_eq!(img.get_raw_pixels().len(), (width * height * 4) as usize);
     }
+
+    // ============================================
+    // P0 级别测试用例 - 已补充
+    // ============================================
+
+    #[test]
+    fn test_invert() {
+        let width = 4;
+        let height = 1;
+        let raw_pix = vec![
+            255, 0, 0, 255, // 纯红 → 反色：青
+            0, 255, 0, 255, // 纯绿 → 反色：品红
+            0, 0, 255, 255, // 纯蓝 → 反色：黄
+            255, 255, 0, 255, // 纯黄 → 反色：蓝
+        ];
+        let expected = vec![
+            0, 255, 255, 255, 255, 0, 255, 255, 255, 255, 0, 255, 0, 0, 255, 255,
+        ];
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        invert(&mut img);
+        assert_eq!(img.raw_pixels, expected);
+    }
+
+    #[test]
+    fn test_grayscale() {
+        let width = 2;
+        let height = 2;
+        let raw_pix = vec![
+            255, 0, 0, 255, // 红
+            0, 255, 0, 255, // 绿
+            0, 0, 255, 255, // 蓝
+            255, 255, 255, 255, // 白
+        ];
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        grayscale(&mut img);
+
+        // 验证所有通道都变成相同的灰度值
+        for i in (0..img.raw_pixels.len()).step_by(4) {
+            let r = img.raw_pixels[i];
+            let g = img.raw_pixels[i + 1];
+            let b = img.raw_pixels[i + 2];
+            assert_eq!(r, g, "R and G channel should be equal for grayscale");
+            assert_eq!(g, b, "G and B channel should be equal for grayscale");
+        }
+    }
+
+    #[test]
+    fn test_grayscale_human_corrected() {
+        let width = 1;
+        let height = 1;
+        let raw_pix = vec![100, 100, 100, 255];
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        grayscale_human_corrected(&mut img);
+
+        // 验证灰度值使用正确的系数: 0.3*R + 0.59*G + 0.11*B
+        let expected_gray = (100.0 * 0.3 + 100.0 * 0.59 + 100.0 * 0.11) as u8;
+        assert_eq!(img.raw_pixels[0], expected_gray);
+    }
+
+    #[test]
+    fn test_threshold() {
+        let width = 4;
+        let height = 1;
+        let raw_pix = vec![
+            50, 100, 150, 255, // 平均 ~100 < 128 → 0
+            200, 50, 100, 255, // 平均 ~117 < 128 → 0
+            10, 20, 30, 255, // 平均 ~20 < 128 → 0
+            240, 250, 255, 255, // 平均 ~248 > 128 → 255
+        ];
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        threshold(&mut img, 128);
+
+        // 前三个像素应变为黑色 (0)，最后一个应变为白色 (255)
+        assert_eq!(img.raw_pixels[0], 0);
+        assert_eq!(img.raw_pixels[4], 0);
+        assert_eq!(img.raw_pixels[8], 0);
+        assert_eq!(img.raw_pixels[12], 255);
+    }
+
+    #[test]
+    fn test_sepia() {
+        let width = 1;
+        let height = 1;
+        let raw_pix = vec![128, 128, 128, 255]; // 中灰
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        sepia(&mut img);
+
+        // 棕褐算法: new_r = avg + 100, new_g = avg + 50, new_b = avg
+        let avg = 128.0;
+        let expected_r = if avg as u32 + 100 < 255 {
+            (avg + 100.0) as u8
+        } else {
+            255
+        };
+        let expected_g = if avg as u32 + 50 < 255 {
+            (avg + 50.0) as u8
+        } else {
+            255
+        };
+        assert_eq!(img.raw_pixels[0], expected_r);
+        assert_eq!(img.raw_pixels[1], expected_g);
+        assert_eq!(img.raw_pixels[2], 128); // b 不变
+    }
+
+    #[test]
+    fn test_solarize_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        solarize(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_dec_brightness_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        dec_brightness(&mut img, 30);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_inc_brightness_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        monochrome(&mut img, 10, 20, 30);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_desaturate_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        desaturate(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_pixelize_preserves_dimensions() {
+        let width = 8;
+        let height = 8;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        pixelize(&mut img, 4);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_normalize_min_max_tracking() {
+        let width = 2;
+        let height = 2;
+        let raw_pix = vec![
+            50, 50, 50, 255, 200, 200, 200, 255, 100, 100, 100, 255, 150, 150, 150, 255,
+        ];
+
+        let mut img = PhotonImage::new(raw_pix, width, height);
+        normalize(&mut img);
+
+        // 最暗的(50)应该变成0，最亮的(200)应该变成255
+        assert_eq!(img.raw_pixels[0], 0); // min = 50 → 0
+        assert_eq!(img.raw_pixels[4], 255); // max = 200 → 255
+    }
+
+    #[test]
+    fn test_adjust_contrast_preserves_dimensions() {
+        let width = 4;
+        let height = 1;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        adjust_contrast(&mut img, 30.0);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_tint_preserves_dimensions() {
+        let width = 4;
+        let height = 1;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        tint(&mut img, 10, 20, 30);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_halftone_preserves_dimensions() {
+        let width = 8;
+        let height = 8;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        halftone(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_colorize_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        colorize(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_offset_red_preserves_dimensions() {
+        let width = 10;
+        let height = 10;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        offset_red(&mut img, 2);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+    }
+
+    #[test]
+    fn test_multiple_offsets_preserves_dimensions() {
+        let width = 10;
+        let height = 10;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        multiple_offsets(&mut img, 2, 0, 2);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+    }
+
+    #[test]
+    fn test_frosted_glass_preserves_dimensions() {
+        let width = 8;
+        let height = 8;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        frosted_glass(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    // ============================================
+    // P1 级别测试用例 - 已补充
+    // ============================================
+
+    #[test]
+    fn test_sobel_horizontal_preserves_dimensions() {
+        let width = 3;
+        let height = 3;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        sobel_horizontal(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+    }
+
+    #[test]
+    fn test_sobel_vertical_preserves_dimensions() {
+        let width = 3;
+        let height = 3;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        sobel_vertical(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+    }
+
+    #[test]
+    fn test_gaussian_blur_preserves_dimensions() {
+        let width = 5;
+        let height = 5;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        gaussian_blur(&mut img, 2);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_mix_with_colour_alpha_preserved() {
+        let width = 1;
+        let height = 1;
+        let raw_pix = vec![128, 128, 128, 128]; // 半透明
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        let mix_color = Rgb::new(255, 0, 0);
+        mix_with_colour(&mut img, mix_color, 0.5);
+
+        // Alpha 通道应该保持不变
+        assert_eq!(img.raw_pixels[3], 128);
+    }
+
+    #[test]
+    fn test_gamma_correction_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        gamma_correction(&mut img, 2.2, 2.2, 2.2);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_primary_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        primary(&mut img);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_dither_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        dither(&mut img, 2);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_oil_preserves_dimensions() {
+        let width = 8;
+        let height = 8;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        oil(&mut img, 2, 50.0);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_duotone_preserves_dimensions() {
+        let width = 4;
+        let height = 4;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        let color_a = Rgb::new(0, 0, 0);
+        let color_b = Rgb::new(255, 255, 255);
+        duotone(&mut img, color_a, color_b);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_vertical_strips_preserves_dimensions() {
+        let width = 8;
+        let height = 8;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        vertical_strips(&mut img, 4);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    #[test]
+    fn test_horizontal_strips_preserves_dimensions() {
+        let width = 8;
+        let height = 8;
+        let raw_pix: Vec<u8> = std::iter::repeat([128_u8, 128, 128, 255])
+            .take(width * height)
+            .flatten()
+            .collect();
+
+        let mut img = PhotonImage::new(raw_pix, width as u32, height as u32);
+        horizontal_strips(&mut img, 4);
+
+        assert_eq!(img.get_width(), width as u32);
+        assert_eq!(img.get_height(), height as u32);
+        assert_eq!(img.raw_pixels.len(), (width * height * 4) as usize);
+    }
+
+    // ============================================
+    // 补充导入缺失的函数
+    // ============================================
+    use crate::channels::invert;
+    use crate::colour_spaces::{gamma_correction, mix_with_colour};
+    use crate::conv::{gaussian_blur, sobel_horizontal, sobel_vertical};
+    use crate::effects::{
+        adjust_contrast, colorize, dec_brightness, dither, duotone, frosted_glass,
+        halftone, horizontal_strips, inc_brightness, multiple_offsets, normalize,
+        offset_red, oil, pixelize, primary, solarize, tint, vertical_strips,
+    };
+    use crate::monochrome::monochrome;
+    use crate::monochrome::{
+        desaturate, grayscale, grayscale_human_corrected, sepia, threshold,
+    };
+    use crate::Rgb;
 }

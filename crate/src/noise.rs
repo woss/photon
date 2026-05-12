@@ -1,10 +1,5 @@
 //! Add noise to images.
 
-use image::Pixel;
-use image::{GenericImage, GenericImageView};
-
-use crate::helpers;
-use crate::iter::ImageIterator;
 use crate::PhotonImage;
 
 #[cfg(feature = "enable_wasm")]
@@ -37,31 +32,22 @@ use rand::Rng;
 /// ```
 #[cfg_attr(feature = "enable_wasm", wasm_bindgen)]
 pub fn add_noise_rand(photon_image: &mut PhotonImage) {
-    let mut img = helpers::dyn_image_from_raw(photon_image);
+    let buf = photon_image.raw_pixels.as_mut_slice();
 
     #[cfg(not(all(target_arch = "wasm64", not(target_os = "wasi"))))]
     let mut rng = rand::thread_rng();
 
-    for (x, y) in ImageIterator::with_dimension(&img.dimensions()) {
+    for i in (0..buf.len()).step_by(4) {
         #[cfg(not(all(target_arch = "wasm64", not(target_os = "wasi"))))]
         let offset = rng.gen_range(0, 150);
 
         #[cfg(all(target_arch = "wasm64", not(target_os = "wasi")))]
         let offset = (random() * 150.0) as u8;
 
-        let px =
-            img.get_pixel(x, y).map(
-                |ch| {
-                    if ch <= 255 - offset {
-                        ch + offset
-                    } else {
-                        255
-                    }
-                },
-            );
-        img.put_pixel(x, y, px);
+        for c in 0..3 {
+            buf[i + c] = buf[i + c].saturating_add(offset);
+        }
     }
-    photon_image.raw_pixels = img.into_bytes();
 }
 
 /// Add pink-tinted noise to an image.
@@ -83,7 +69,8 @@ pub fn add_noise_rand(photon_image: &mut PhotonImage) {
 /// ```
 #[cfg_attr(feature = "enable_wasm", wasm_bindgen)]
 pub fn pink_noise(photon_image: &mut PhotonImage) {
-    let mut img = helpers::dyn_image_from_raw(photon_image);
+    let buf = photon_image.raw_pixels.as_mut_slice();
+
     #[cfg(not(all(target_arch = "wasm64", not(target_os = "wasi"))))]
     let mut rng = rand::thread_rng();
 
@@ -93,8 +80,8 @@ pub fn pink_noise(photon_image: &mut PhotonImage) {
     #[cfg(all(target_arch = "wasm64", not(target_os = "wasi")))]
     let rng_gen = || random();
 
-    for (x, y) in ImageIterator::with_dimension(&img.dimensions()) {
-        let ran1: f64 = rng_gen(); // generates a float between 0 and 1
+    for i in (0..buf.len()).step_by(4) {
+        let ran1: f64 = rng_gen();
         let ran2: f64 = rng_gen();
         let ran3: f64 = rng_gen();
 
@@ -102,16 +89,14 @@ pub fn pink_noise(photon_image: &mut PhotonImage) {
         let ran_color2: f64 = 0.6 + ran2 * 0.1;
         let ran_color3: f64 = 0.6 + ran3 * 0.4;
 
-        let mut px = img.get_pixel(x, y);
-        let channels = px.channels();
+        let new_r_val = (buf[i] as f64 * 0.99 * ran_color1) as u8;
+        let new_g_val = (buf[i + 1] as f64 * 0.99 * ran_color2) as u8;
+        let new_b_val = (buf[i + 2] as f64 * 0.99 * ran_color3) as u8;
 
-        let new_r_val = (channels[0] as f64 * 0.99 * ran_color1) as u8;
-        let new_g_val = (channels[1] as f64 * 0.99 * ran_color2) as u8;
-        let new_b_val = (channels[2] as f64 * 0.99 * ran_color3) as u8;
-        px = image::Rgba([new_r_val, new_g_val, new_b_val, 255]);
-        img.put_pixel(x, y, px);
+        buf[i] = new_r_val;
+        buf[i + 1] = new_g_val;
+        buf[i + 2] = new_b_val;
     }
-    photon_image.raw_pixels = img.into_bytes();
 }
 
 /// Inline XorShift32 pseudo-random number generator.
@@ -186,7 +171,7 @@ pub fn film_grain(
 
         // midtone_weight peaks at 1.0 when luma == 127.5 (50 % grey) and falls linearly to 0.0 at pure
         //  black (luma == 0) and pure white (luma == 255).
-        let midtone_weight = 1.0_f32 - (luma / 255.0 - 0.5).abs() * 2.0;
+        let midtone_weight = 1.0_f32 - ((luma / 255.0_f32 - 0.5_f32).abs()) * 2.0_f32;
 
         let grain_scale = max_grain * midtone_weight;
         if monochrome {

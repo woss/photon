@@ -95,10 +95,11 @@ pub fn apply_lens_correction(
 
     let width = photon_image.width as usize;
     let height = photon_image.height as usize;
+    let pixel_count = width * height;
 
-    // Clone the original pixels for reading
-    let source_pixels = photon_image.raw_pixels.clone();
-    let dest_pixels = &mut photon_image.raw_pixels;
+    // Allocate output buffer - compute results first, then write to avoid read/write conflicts
+    let mut output = vec![0u8; pixel_count * 4];
+    let source_pixels = &photon_image.raw_pixels;
 
     let center_x = width as f32 / 2.0;
     let center_y = height as f32 / 2.0;
@@ -156,16 +157,19 @@ pub fn apply_lens_correction(
                         value = (value + vignette_factor * 255.0).clamp(0.0, 255.0);
                     }
 
-                    dest_pixels[dest_idx + c] = value as u8;
+                    output[dest_idx + c] = value as u8;
                 }
-                dest_pixels[dest_idx + 3] = 255;
+                output[dest_idx + 3] = 255;
             } else {
                 // Out of bounds - black
-                dest_pixels[dest_idx] = 0;
-                dest_pixels[dest_idx + 1] = 0;
-                dest_pixels[dest_idx + 2] = 0;
-                dest_pixels[dest_idx + 3] = 255;
+                output[dest_idx] = 0;
+                output[dest_idx + 1] = 0;
+                output[dest_idx + 2] = 0;
+                output[dest_idx + 3] = 255;
             }
         }
     }
+
+    // Write the computed output back to the image
+    photon_image.raw_pixels.copy_from_slice(&output);
 }
