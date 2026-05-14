@@ -561,8 +561,8 @@ pub fn apply_texture(photon_image: &mut PhotonImage, amount: f32) {
     // Medium radius for texture (smaller than clarity, larger than sharpening)
     let radius: usize = 5;
 
-    // Create blurred copy using box blur
-    let mut blurred = pixels.clone();
+    // Pre-allocate blurred buffer instead of cloning
+    let mut blurred = vec![0u8; pixel_count * 4];
 
     // Horizontal blur pass
     for y in 0..height {
@@ -591,7 +591,8 @@ pub fn apply_texture(photon_image: &mut PhotonImage, amount: f32) {
     }
 
     // Vertical blur pass
-    let mut blurred2 = blurred.clone();
+    // Allocate directly instead of cloning - vertical pass only reads from blurred
+    let mut blurred2 = vec![0u8; pixel_count * 4];
     for y in 0..height {
         for x in 0..width {
             let mut sum_r = 0u32;
@@ -1150,7 +1151,8 @@ pub fn apply_sharpening(
     }
 
     // Box blur for "unsharp" part (horizontal pass)
-    let mut blurred = luminance.clone();
+    // Pre-allocate instead of cloning luminance
+    let mut blurred = vec![0.0f32; width * height];
     for y in 0..height {
         for x in 0..width {
             let mut sum = 0.0;
@@ -1164,7 +1166,8 @@ pub fn apply_sharpening(
     }
 
     // Vertical pass
-    let mut blurred2 = blurred.clone();
+    // Allocate directly instead of cloning - vertical pass only reads from blurred
+    let mut blurred2 = vec![0.0f32; width * height];
     for y in 0..height {
         for x in 0..width {
             let mut sum = 0.0;

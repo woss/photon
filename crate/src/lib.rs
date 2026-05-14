@@ -72,8 +72,9 @@ pub struct PhotonImage {
     height: u32,
 }
 
+#[cfg(not(feature = "enable_wasm"))]
 impl PhotonImage {
-    /// Get the PhotonImage's pixels as a slice of u8s.
+    /// Get the PhotonImage's pixels as a slice of u8s (no cloning).
     pub fn get_raw_pixels_slice(&self) -> &[u8] {
         &self.raw_pixels
     }
