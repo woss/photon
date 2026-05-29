@@ -12,7 +12,7 @@
   [![Status](https://img.shields.io/badge/status-active-success.svg?logo=statuspal)]()
   [![GitHub Issues](https://img.shields.io/github/issues/silvia-odwyer/photon.svg?logo=github)](https://github.com/silvia-odwyer/photon/issues)
   [![Gitter Chat](https://img.shields.io/gitter/room/silvia-odwyer/photon?color=cyan&logo=Gitter)](https://gitter.im/photonlibrary/community "Gitter chat")
-  [![NPM Monthly Downloads](https://img.shields.io/npm/dm/@silvia-odwyer/photon?logo=npm&color=pink)](https://www.npmjs.com/package/@silvia-odwyer/photon)
+  [![NPM Monthly Downloads](https://img.shields.io/npm/dm/@silvia-odwyer/photon?logo=npm&color=pink)](https://www.npmjs.com/package/@silvia-odwyer/photon-node)
   [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/silvia-odwyer/photon/ci.yml?branch=master&logo=github&)](https://github.com/silvia-odwyer/photon/blob/master/.github/workflows/compile_wasm.yaml)
 
   [![Crates.io](https://img.shields.io/crates/v/photon_rs?logo=rust)](https://crates.io/crates/photon_rs)
@@ -48,6 +48,11 @@ You can run Photon:
 - **Use Natively:** For command-line apps, native photo editing apps, and so forth, Photon's core codebase is in Rust, allowing for cross-platform
 development.
 - **Pure Rust** - Unlike other libraries, 100% of the library's codebase is written in Rust, so security and safety is guaranteed.
+
+## Featured in
+Photon is the image processing library used in the AI assistant [OpenClaw](https://github.com/openclaw/openclaw).
+
+It is also the image processing library used in the [Pi coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) also.
 
 ### Live Demo
 View the [official demo of WASM in action](https://silvia-odwyer.github.io/photon/demo.html).
@@ -95,6 +100,7 @@ Functions include:
 - **Filters**: Over 30 pre-set filters available, incorporating various effects and transformations.
 - **Watermarking**: Watermark images in multiple formats.
 - **Blending**: Blend images together using 10 different techniques, change image backgrounds.
+- **Special Effects**: Film grain, vignette, Bayer dither effects + many more.
 
 ## Get Started Natively
 
@@ -200,14 +206,18 @@ cargo run --release
 Compare the original image with the outputted image, and you'll see the desired effect has been applied.
 
 ## Latest Updates
+- Bayer dither, film grain and vignette effects - Added in [PR #216](https://github.com/silvia-odwyer/photon/pull/216)
+- 3 way color grading and functions for making adjustments/corrections to images - Added in [PR #214](https://github.com/silvia-odwyer/photon/pull/214)
 - Halftoning effect for WASM - Added in [PR #184](https://github.com/silvia-odwyer/photon/pull/184)
 - WebP Encoding Support - Added in [PR #164](https://github.com/silvia-odwyer/photon/pull/164)
 
 ## Cool Projects Using Photon
+- [OpenClaw](https://github.com/openclaw/openclaw)
+- [Pi coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) 
 - [Next Image Processing API](https://github.com/yoeven/next-image-processing-api)
 - [Hypetrigger](https://crates.io/crates/hypetrigger)
 
-If you've built a project with Photon and would like to be included in the list, just submit a PR.
+If you've built a project with Photon and would like to be included in the list, just submit a PR!
 
 
 ## Got Questions?
@@ -233,7 +243,7 @@ Photon is always accepting new filters and functions. In that vein if you'd like
 
 ## To Do
 - Blend images using browser-specific functions for WASM version of library.
-- Vintage images with light leaks, grains, etc.,
+- Vintage images with light leaks, etc.,
 - Tests in a headless web browser for WebAssembly version of library
 
 ## Contributors
