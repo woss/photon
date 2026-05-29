@@ -12,7 +12,7 @@
   [![Status](https://img.shields.io/badge/status-active-success.svg?logo=statuspal)]()
   [![GitHub Issues](https://img.shields.io/github/issues/silvia-odwyer/photon.svg?logo=github)](https://github.com/silvia-odwyer/photon/issues)
   [![Gitter Chat](https://img.shields.io/gitter/room/silvia-odwyer/photon?color=cyan&logo=Gitter)](https://gitter.im/photonlibrary/community "Gitter chat")
-  [![NPM Monthly Downloads](https://img.shields.io/npm/dm/@silvia-odwyer/photon?logo=npm&color=pink)](https://www.npmjs.com/package/@silvia-odwyer/photon-node)
+  [![NPM Monthly Downloads](https://img.shields.io/npm/dm/@silvia-odwyer/photon-node?logo=npm&color=pink)](https://www.npmjs.com/package/@silvia-odwyer/photon-node)
   [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/silvia-odwyer/photon/ci.yml?branch=master&logo=github&)](https://github.com/silvia-odwyer/photon/blob/master/.github/workflows/compile_wasm.yaml)
 
   [![Crates.io](https://img.shields.io/crates/v/photon_rs?logo=rust)](https://crates.io/crates/photon_rs)
@@ -49,7 +49,7 @@ You can run Photon:
 development.
 - **Pure Rust** - Unlike other libraries, 100% of the library's codebase is written in Rust, so security and safety is guaranteed.
 
-## Featured in
+### Featured in
 Photon is the image processing library used in the AI assistant [OpenClaw](https://github.com/openclaw/openclaw).
 
 It is also the image processing library used in the [Pi coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) also.
@@ -100,7 +100,7 @@ Functions include:
 - **Filters**: Over 30 pre-set filters available, incorporating various effects and transformations.
 - **Watermarking**: Watermark images in multiple formats.
 - **Blending**: Blend images together using 10 different techniques, change image backgrounds.
-- **Special Effects**: Film grain, vignette, Bayer dither effects + many more.
+- **Special effects**: Film grain, vignette, Bayer dither effects + many more (in next 2026 release)
 
 ## Get Started Natively
 
@@ -183,7 +183,7 @@ The full usage steps are provided [here](https://www.npmjs.com/package/@cf-wasm/
 ## Modules
 Photon contains a series of modules, which include:
 
-- `effects`: Various image effects, including adding offsets, thresholding, duotoning, solarization, etc.,
+- `effects`: Various image effects, including adding offsets, thresholding, duotoning, solarization, etc.
 - `channels`: Functions related to increasing/decreasing the red, green, and blue channels of the image data.
 - `transform`: Resize, crop, flip, and rotate images.
 - `filters`: Preset filters, which alter the rgb channels of the image. Contains over 20.
